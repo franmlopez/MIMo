@@ -144,8 +144,8 @@ class MIMoStandupEnv(MIMoEnvDummy, utils.EzPickle):
 
     def compute_reward(self, achieved_goal, desired_goal, info):
         head_height = self.sim.data.get_body_xpos('head')[2]
-        quad_ctrl_cost = 0.001 * np.square(self.sim.data.ctrl).sum()
-        reward = head_height - 0.05 - quad_ctrl_cost
+        quad_ctrl_cost = 0.01 * np.square(self.sim.data.ctrl).sum()
+        reward = head_height - 0.2 - quad_ctrl_cost
         return reward
 
     def _is_success(self, achieved_goal, desired_goal):
@@ -181,31 +181,4 @@ class MIMoStandupEnv(MIMoEnvDummy, utils.EzPickle):
         for _ in range(100):
             self.step(np.zeros(self.action_space.shape))
         
-        return True
-
-    def step(self, action):
-        action = np.clip(action, self.action_space.low, self.action_space.high)
-        self._set_action(action)
-        self.sim.step()
-        self._step_callback()
-        obs = self._get_obs()
-
-        achieved_goal = self._get_achieved_goal()
-
-        # Done always false if not done_active, else either of is_success or is_failure must be true
-        is_success = self._is_success(achieved_goal, self.goal)
-        is_failure = self._is_failure(achieved_goal, self.goal)
-
-        info = {
-            "is_success": is_success,
-            "is_failure": is_failure,
-        }
-
-        if not self.goals_in_observation:
-            info["achieved_goal"] = achieved_goal.copy()
-            info["desired_goal"] = self.goal.copy()
-
-        done = self._is_done(achieved_goal, self.goal, info)
-
-        reward = self.compute_reward(achieved_goal, self.goal, info)
-        return obs, reward, done, info
+        return True 
