@@ -6,8 +6,7 @@ import copy
 from gym import spaces
 from gym.envs.robotics import robot_env
 
-from gymTouch.touch import DiscreteTouch, scale_linear
-
+from mimoTouch.touch import DiscreteTouch
 from mimoVision.vision import SimpleVision
 from mimoVestibular.vestibular import SimpleVestibular
 from mimoProprioception.proprio import SimpleProprioception
@@ -47,6 +46,7 @@ class MIMoEnv(robot_env.RobotEnv):
 
         model = mujoco_py.load_model_from_path(fullpath)
         self.sim = mujoco_py.MjSim(model, nsubsteps=n_substeps)
+        self.sim.forward()
         self.viewer = None
         self._viewers = {}
 
@@ -61,7 +61,6 @@ class MIMoEnv(robot_env.RobotEnv):
 
         self.goal = self._sample_goal()
         self.action_space = spaces.Box(-1.0, 1.0, shape=(n_actions,), dtype="float32")
-
         obs = self._get_obs()
         # Observation spaces
         spaces_dict = {
@@ -69,7 +68,6 @@ class MIMoEnv(robot_env.RobotEnv):
                 -np.inf, np.inf, shape=obs["observation"].shape, dtype="float32"
             ),
         }
-
         if self.touch:
             spaces_dict["touch"] = spaces.Box(
                     -np.inf, np.inf, shape=obs["touch"].shape, dtype="float32"
@@ -116,13 +114,7 @@ class MIMoEnv(robot_env.RobotEnv):
         pass
 
     def _touch_setup(self, touch_params):
-        self.touch = DiscreteTouch(self)
-        for body_name in touch_params:
-            body_id = self.sim.model.body_name2id(body_name)
-            self.touch.add_body(body_id, scale=touch_params[body_name])
-
-        # Get touch obs once to ensure all output arrays are initialized
-        self._get_touch_obs()
+        self.touch = DiscreteTouch(self, touch_params=touch_params)
 
     def _vision_setup(self, vision_params):
         self.vision = SimpleVision(self, vision_params)  # This fixes the GLEW initialization error
@@ -185,17 +177,13 @@ class MIMoEnv(robot_env.RobotEnv):
         return self.proprioception.get_proprioception_obs()
 
     def _get_touch_obs(self):
-        touch_obs = self.touch.get_touch_obs(DiscreteTouch.get_force_relative, 3, scale_linear)
+        touch_obs = self.touch.get_touch_obs()
         return touch_obs
 
     def _get_vision_obs(self):
         """ Output renders from the camera. Multiple cameras are concatenated along the first axis"""
         vision_obs = self.vision.get_vision_obs()
         return vision_obs
-
-    def _get_vestibular_obs(self):
-        vestibular_obs = self.vestibular.get_vestibular_obs()
-        return vestibular_obs
 
     def _get_vestibular_obs(self):
         vestibular_obs = self.vestibular.get_vestibular_obs()
@@ -214,7 +202,6 @@ class MIMoEnv(robot_env.RobotEnv):
         if self.touch:
             touch_obs = self._get_touch_obs().ravel()
             observation_dict["touch"] = touch_obs
-
         # robot vision:
         if self.vision:
             vision_obs = self._get_vision_obs()

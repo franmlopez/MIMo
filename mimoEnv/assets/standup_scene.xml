@@ -47,8 +47,10 @@
 	<include file="standup_meta.xml"></include>
 
     <equality>
-        <weld body1="left_foot"  relpose="-0 -0.05 0 0.01 0 0 0"/>
-        <weld body1="right_foot" relpose="-0 0.05 0 0.01 0 0 0"/>
+        <weld body1="left_foot"  relpose="0 -0.05 0 0.01 0 0 0"/>
+        <weld body1="right_foot" relpose="0 0.05 0 0.01 0 0 0"/>
+        <weld body1="left_fingers"  relpose="0.1 0.1 0.45 0 -0.1 0.1 0 "/>
+        <weld body1="right_fingers" relpose="0.1 -0.1 0.45 0 0.1 0.1 0 "/>
         <weld body1="head" body2="upper_body"/>
         <weld body1="left_eye" body2="head"/>
         <weld body1="right_eye" body2="head"/>
@@ -61,10 +63,16 @@
         <light mode="targetbodycom" target="upper_body" directional="false" diffuse=".8 .8 .8" specular="0.3 0.3 0.3" pos="0 0 5.0" dir="0 0 -1"/>
 		
 		<!-- The location and orientation of the base model can be set using this body -->
-		<body name="mimo_location" pos="0 0 .05" euler="0 270 0">
+		<body name="mimo_location" pos="0 0 .33" euler="0 0 0">
 			<freejoint/>
 			<include file="MIMo_model.xml"></include> <!-- Import the actual model-->
 		</body>
 		
+        <!--
+        <body name="crib" pos="0.07 0 0.3">
+            <geom type="box" material="matgeom" size="0.02 0.25 0.1" pos="0 0 0" condim="6"/>
+        </body>
+        -->
+
     </worldbody>
 </mujoco>
