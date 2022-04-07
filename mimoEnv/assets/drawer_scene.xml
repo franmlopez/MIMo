@@ -1,0 +1,103 @@
+<!-- Copyright 2021 DeepMind Technologies Limited
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<mujoco model="MIMo">
+
+    <compiler inertiafromgeom="true" angle="degree"/>
+
+    <option timestep="0.005" iterations="50" tolerance="1e-10" solver="Newton" jacobian="dense" cone="elliptic" impratio="1.0"/>
+
+    <size nconmax="1000" njmax="5000" nstack="10000000" nuser_cam="3"/>
+
+    <visual>
+        <map force="0.1" zfar="30" znear="0.005"/>
+        <rgba haze="0.15 0.25 0.35 1"/>
+        <quality shadowsize="0"/>
+        <global offwidth="800" offheight="800"/>
+    </visual>
+
+    <asset>
+        <texture type="skybox" builtin="gradient" rgb1="0.3 0.5 0.7" rgb2="0 0 0" width="512" height="512"/>
+
+        <texture name="texplane" type="2d" builtin="checker" rgb1=".2 .3 .4" rgb2=".1 0.15 0.2" width="512" height="512" mark="cross" markrgb=".8 .8 .8"/>
+
+        <texture name="texgeom" type="cube" builtin="flat" mark="cross" width="127" height="1278"
+            rgb1="0.8 0.6 0.4" rgb2="0.8 0.6 0.4" markrgb="1 1 1" random="0.01"/>
+
+        <material name="matplane" reflectance="0.3" texture="texplane" texrepeat="1 1" texuniform="true"/>
+
+        <material name="wood" rgba="0.72 0.55 0.42 1" specular=".0" shininess=".0"/>
+        <material name="metal" rgba="0.5 0.5 0.5 1" specular=".0" shininess="1"/>
+        <material name="plastic" rgba="0.9 0.05 0.05 1" specular=".0" shininess=".2"/>
+
+    </asset>
+	
+	<!-- Import everything except the kinematic tree -->
+	<include file="drawer_meta.xml"></include>
+
+    <equality>
+        <weld body1="head"/>
+        <weld body1="hip"/>
+        <weld body1="left_foot"/>
+        <weld body1="right_foot"/>
+        <weld body1="drawer" body2="right_fingers" relpose="-0.25 0 0.25 1 1 0 1"/>
+        <weld body1="weight" body2="drawer"/>
+    </equality>
+
+    <keyframe>
+        <key qpos='-1.09241e-05 4.03116e-06 0.349443 1 -2.16682e-06 8.70054e-07 5.45378e-06 -0.00492904 0.288979 0.00376704 0.0026713 0.287948 -0.00657526 -0.576921 0.00130918 -9.38079e-05 -7.15269e-09 -4.2171e-09 -5.75793e-09 7.15269e-09 -4.2171e-09 5.75793e-09 0.522459 0.734782 -0.484279 -0.262299 -0.259645 0.863403 0.221394 0.139992 -0.0377091 -0.142301 0.00894348 -0.0741003 -0.35951 0.00726376 -0.0193619 -0.374183 -0.107132 1.94503e-05 -1.83078e-05 -0.196001 0.0888279 -0.00018612 -2.22405e-05 -0.000995124 -0.107133 3.80335e-05 -1.40993e-05 -0.195996 0.0888214 -0.000213338 1.77433e-06 -0.00099508 2.4489e-05 0.660031 -0.15 0.484858 1 -1.06491e-07 1.37723e-05 3.49732e-09 0.451229 -0.15 0.489973 1 -5.02742e-16 3.35704e-09 -1.50003e-07'/>
+    </keyframe>
+
+    <worldbody>
+        <geom name="floor" friction="1 .1 .1" pos="0 0 0" size="0 0 .25" type="plane" material="matplane" condim="3"/>
+
+        <light directional="false" diffuse=".4 .4 .4" specular="0 0 0" pos="0 0 10" dir="0 0 -1" castshadow="false"/>
+        <light directional="false" diffuse=".4 .4 .4" specular="0 0 0" pos="0 0 10" dir="0 0 -1" castshadow="false"/>
+        <light mode="targetbodycom" target="upper_body" directional="false" diffuse=".5 .5 .5" specular="0.3 0.3 0.3" pos="0 0 5.0" dir="0 0 -1"/>
+        <light mode="targetbodycom" target="upper_body" directional="false" diffuse=".5 .5 .5" specular="0.3 0.3 0.3" pos="5.0 0 0.5" dir="-1 0 0"/>
+        <light mode="targetbodycom" target="upper_body" directional="false" diffuse=".3 .3 .3" specular="0.3 0.3 0.3" pos="0 5 0.5" dir="0 -1 0"/>
+        <light mode="targetbodycom" target="upper_body" directional="false" diffuse=".3 .3 .3" specular="0.3 0.3 0.3" pos="0 -5 0.5" dir="0 1 0"/>
+                
+        <!-- The location and orientation of the base model can be set using this body -->
+		<body name="mimo_location" pos="0 0 .35" euler="0 0 0">
+			<freejoint/>
+			<include file="MIMo_model.xml"></include> <!-- Import the actual model-->
+		</body>		
+
+        <body name="base" pos="0.5 -0.15 0.25">
+			<geom type="box" material="wood" size="0.2 0.2 0.195" pos="0 0 0" condim="6"/>
+            <geom type="box" material="wood" size="0.2 0.2 0.005" pos="0 0 0.31" condim="6"/>
+		</body>
+
+
+        <body name="drawer" pos="0.5 -0.15 0.25">
+			<joint name="drawer" type="slide" pos="0 0 0" axis="1 0 0" range="-5 0"/>
+            <geom type="box" material="wood" size="0.05 0.2 0.05" pos="-0.15 0 0.25" condim="6"/>
+            <geom type="box" material="wood" size="0.2 0.2 0.005" pos="0 0 0.205" condim="6"/>
+            <geom type="cylinder" material="wood" size="0.025 0.025" pos="-0.2 0 0.25" euler="0 90 0" condim="6"/>
+		</body>
+
+        <body name="weight" pos="0.66 -0.15 0.485">
+            <freejoint/>
+            <geom type="cylinder" material="metal" size="0.025 0.025" pos="0 0 0" mass="1" condim="6"/>
+        </body>
+
+        <body name="toy" pos="0.45 -0.15 0.485">
+            <freejoint/>
+            <geom type="box" material="plastic" size="0.03 0.03 0.03" pos="0 0 0" condim="6"/>
+        </body>
+
+    </worldbody>
+</mujoco>
