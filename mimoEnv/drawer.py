@@ -12,7 +12,7 @@ def test(env, test_for=1000, model=None):
             action = env.action_space.sample()
         else:
             action, _ = model.predict(obs)
-        obs, _, done, _ = env.step(action)
+        obs, rew, done, _ = env.step(action)
         env.render()
         if done:
             time.sleep(1)
@@ -22,15 +22,12 @@ def test(env, test_for=1000, model=None):
 
 def main():
 
-    env = gym.make('MIMoDrawer-v0')
-    obs = env.reset()
-
     parser = argparse.ArgumentParser()
     parser.add_argument('--train_for', default=0, type=int,
                         help='Total timesteps of training')
     parser.add_argument('--test_for', default=1000, type=int,
                         help='Total timesteps of testing of trained policy')               
-    parser.add_argument('--save_every', default=100000, type=int,
+    parser.add_argument('--save_every', default=None, type=int,
                         help='Number of timesteps between model saves')
     parser.add_argument('--algorithm', default=None, type=str, 
                         choices=['PPO', 'SAC', 'TD3', 'DDPG', 'A2C', 'HER'],
@@ -39,14 +36,19 @@ def main():
                         help='Name of model to load')
     parser.add_argument('--save_model', default='', type=str,
                         help='Name of model to save')
+    parser.add_argument('--prediction', default=False, type=bool,
+                        help='Prediction for intrinsic reward')
     
     args = parser.parse_args()
     algorithm = args.algorithm
+    train_for = args.train_for
+    test_for = args.test_for
     load_model = args.load_model
     save_model = args.save_model
     save_every = args.save_every
-    train_for = args.train_for
-    test_for = args.test_for
+    save_every = train_for if save_every==None else save_every
+    
+    prediction = args.prediction
 
     if algorithm == 'PPO':
         from stable_baselines3 import PPO as RL
@@ -58,6 +60,9 @@ def main():
         from stable_baselines3 import DDPG as RL
     elif algorithm == 'A2C':
         from stable_baselines3 import A2C as RL
+
+    env = gym.make('MIMoDrawer-v0', prediction=prediction)
+    obs = env.reset()
 
     # load pretrained model or create new one
     if algorithm is None:
