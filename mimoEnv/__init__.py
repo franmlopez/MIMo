@@ -1,8 +1,14 @@
 from gym.envs.registration import register
 
-register(id='MIMo-v0',
-         entry_point='mimoEnv.envs:MIMoTestEnv',
-         max_episode_steps=1000,
+
+register(id='MIMoBench-v0',
+         entry_point='mimoEnv.envs:MIMoDummyEnv',
+         max_episode_steps=6000,
+         )
+
+register(id='MIMoShowroom-v0',
+         entry_point='mimoEnv.envs:MIMoShowroomEnv',
+         max_episode_steps=500,
          )
 
 register(id='MIMoReach-v0',
@@ -20,3 +26,7 @@ register(id='MIMoSaccades-v0',
          max_episode_steps=500, 
          )
 
+register(id='MIMoSelfBody-v0',
+         entry_point='mimoEnv.envs:MIMoSelfBodyEnv',
+         max_episode_steps=500, 
+         )
