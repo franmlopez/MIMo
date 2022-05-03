@@ -1,0 +1,15 @@
+<mujoco model="MIMo">
+    <asset>
+        <!--floor-->
+        <texture name="floor" type="2d" file="tex/binocular/floor.png"/>
+        <material name="floor" texture="floor"/>
+
+        <!--walls-->
+        <texture name="walls" type="2d" file="tex/binocular/wall.png"/>
+        <material name="walls" texture="walls"/>
+
+        <!--targets-->
+        <texture name="texture1" type="2d" file="tex/binocular/texture1.png"/>
+        <material name="texture1" texture="texture1"/>
+    </asset>
+</mujoco>

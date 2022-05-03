@@ -30,3 +30,13 @@ register(id='MIMoSelfBody-v0',
          entry_point='mimoEnv.envs:MIMoSelfBodyEnv',
          max_episode_steps=500, 
          )
+
+register(id='MIMoEyeHand-v0',
+         entry_point='mimoEnv.envs:MIMoEyeHandEnv',
+         max_episode_steps=500, 
+         )
+
+register(id='MIMoBinocular-v0',
+         entry_point='mimoEnv.envs:MIMoBinocularEnv',
+         max_episode_steps=10, 
+         )
