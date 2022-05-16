@@ -17,5 +17,5 @@ register(id='MIMoStandup-v0',
 
 register(id='MIMoDrawer-v0',
          entry_point='mimoEnv.envs:MIMoDrawerEnv',
-         max_episode_steps=500,
+         max_episode_steps=1000,
          )
