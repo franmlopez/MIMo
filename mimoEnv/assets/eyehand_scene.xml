@@ -28,30 +28,46 @@
         <global offwidth="800" offheight="800"/>
     </visual>
 
+    <!-- Import everything except the kinematic tree -->
+	<include file="eyehand_meta.xml"></include>
+
     <asset>
         <texture type="skybox" builtin="gradient" rgb1="0.3 0.5 0.7" rgb2="0 0 0" width="512" height="512"/>
 
-        <texture name="texplane" type="2d" builtin="checker" rgb1=".2 .3 .4" rgb2=".1 0.15 0.2" width="512" height="512" mark="cross" markrgb=".8 .8 .8"/>
-
         <texture name="texgeom" type="cube" builtin="flat" mark="cross" width="127" height="1278"
             rgb1="0.8 0.6 0.4" rgb2="0.8 0.6 0.4" markrgb="1 1 1" random="0.01"/>
+        <material name="matgeom-red" texture="texgeom" texuniform="true" rgba="0.8 0.2 .2 1"/>
+        <material name="matgeom-white" texture="texgeom" texuniform="true" rgba="1 1 1 1"/>
+        <material name="matgeom-black" texture="texgeom" texuniform="true" rgba="0 0 0 1"/>
 
-        <material name="matplane" reflectance="0.3" texture="texplane" texrepeat="1 1" texuniform="true"/>
+        <!--background-->
+        <texture name="background" type="2d" file="tex/binocular/background.png"/>
+        <material name="background" texture="background"/>
 
-        <material name="matgeom" texture="texgeom" texuniform="true" rgba="0.8 0.6 .4 1"/>
-		
-		<material name="matmocap" texture="texgeom" texuniform="true" rgba="0.5 0 0.5 0.5"/>
+        <!--floor-->
+        <texture name="floor" type="2d" file="tex/binocular/floor.png"/>
+        <material name="floor" texture="floor"/>
+
+        <!--walls-->
+        <texture name="walls" type="2d" file="tex/binocular/wall.png"/>
+        <material name="walls" texture="walls"/>
+
+        <!--target textures-->
+        <texture name="texture1" type="cube" filefront="../../../../data/texture1.png" rgb1="0 0 0"/>
+        <material name="target-texture" texture="texture1"/>
+
     </asset>
-	
-	<!-- Import everything except the kinematic tree -->
-	<include file="saccades_meta.xml"></include>
-
+    
+    <!-- Import textures for target -->
+    <!--<include file="binocular_textures.xml"></include>-->
+    
     <equality>
         <weld body1="head"/>
         <weld body1="upper_body"/>
         <weld body1="lower_body"/>
         <weld body1="left_upper_arm"/>
         <weld body1="left_hand"/>
+        <weld body1="right_fingers" body2="joystick" relpose="0 0 0.025 0 1 0 0"/>
         <weld body1="left_upper_leg"/>
         <weld body1="left_foot"/>
         <weld body1="right_upper_leg"/>
@@ -59,25 +75,37 @@
     </equality>
 
     <worldbody>
-        <geom name="floor" pos="0 0 0" size="0 0 .25" type="plane" material="matplane" condim="3"/>
-
+        
+        <geom name="floor" pos="2 0 0" size="2.5 2.5 .01" type="box" material="floor" condim="3"/>
+        <geom name="wall-back" pos="4.5 0 1" size="1 2.5 .01" euler="180 90 0" type="box" material="walls" condim="3"/>
+        <geom name="wall-left" pos="2 2.5 1" size="1 2.5 .01" euler="90 0 90" type="box" material="walls" condim="3"/>
+        <geom name="wall-right" pos="2 -2.5 1" size="1 2.5 .01" euler="90 0 90" type="box" material="walls" condim="3"/>
+        
         <light directional="false" diffuse=".4 .4 .4" specular="0 0 0" pos="0 0 10" dir="0 0 -1" castshadow="false"/>
         <light mode="targetbodycom" target="upper_body" directional="false" diffuse=".5 .5 .5" specular="0.3 0.3 0.3" pos="0 0 5.0" dir="0 0 -1"/>
         <light mode="targetbodycom" target="upper_body" directional="false" diffuse=".5 .5 .5" specular="0.3 0.3 0.3" pos="5.0 0 0.5" dir="-1 0 0"/>
         <light mode="targetbodycom" target="upper_body" directional="false" diffuse=".3 .3 .3" specular="0.3 0.3 0.3" pos="0 5 0.5" dir="0 -1 0"/>
         <light mode="targetbodycom" target="upper_body" directional="false" diffuse=".3 .3 .3" specular="0.3 0.3 0.3" pos="0 -5 0.5" dir="0 1 0"/>
-		
+                
         <!-- The location and orientation of the base model can be set using this body -->
-		<body name="mimo_location" pos="0 0 .35" euler="0 0 0">
+		<body name="mimo_location" pos="-0.08125 0 .35" euler="0 0 0">      <!--MIMo positioned such that his eye cameras are at x=0-->
 			<freejoint/>
 			<include file="MIMo_model.xml"></include> <!-- Import the actual model-->
 		</body>
 
-        <body name="target" pos="0.5 0 0.7">
+        <body name="target" pos="3 0 0">
             <freejoint/>
-			<geom type="sphere" material="matgeom" size="0.025" pos="0 0 0" condim="6" solimp="0.99 0.995 0.001 0.5 2" solref="-20000 -20"/>
+			<geom type="box" material="target-texture" size="0.5 0.5 .01" pos="0 0 0.7" euler="90 -90 0"/>
 		</body>
-		
+
+        <body name="joystick" pos="-0.08125 -0.15 0.4">
+            <geom name="joystick-ball" type="sphere" material="matgeom-red" size="0.025" pos="0 0 0" euler="0 0 0"/>
+            <geom name="joystick-stick" type="capsule" material="matgeom-white" size="0.01 0.05" pos="0 0 -0.05" euler="0 0 0"/>
+            <joint name="joystick:horizontal" type="hinge" pos="0 0 -0.1" axis="0 1 0" range="-15 15" stiffness=".10" damping=".015" frictionloss=".001"/>
+			<joint name="joystick:vertical" type="hinge" pos="0 0 -0.1" axis="1 0 0" range="-15 15" stiffness=".10" damping=".015" frictionloss=".001"/>
+        </body>		
+
+        <geom name="joystick-base" type="box" material="matgeom-black" size="0.05 0.05 0.025" pos="-0.08125 -0.15 0.275"/>
 
     </worldbody>
 </mujoco>

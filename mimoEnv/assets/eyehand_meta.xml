@@ -128,9 +128,6 @@
 	</sensor>
 
     <actuator>
-		<!--Left eye-->
-		<motor name="act:left_eye_horizontal" 		joint="robot:left_eye_horizontal" 	gear=".1" 	forcerange="-1 1"/>
-		<motor name="act:left_eye_vertical" 		joint="robot:left_eye_vertical" 	gear=".1" 	forcerange="-1 1"/>
 		<!--Right arm-->
 		<motor name="act:right_shoulder_horizontal" joint="robot:right_shoulder_horizontal" gear="1.8" 	forcerange="-1 1"/>
 		<motor name="act:right_shoulder_abduction" 	joint="robot:right_shoulder_ad_ab" 		gear="4" 	forcerange="-.6875 1"/>

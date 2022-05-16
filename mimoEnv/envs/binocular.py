@@ -4,6 +4,7 @@ import copy
 import mujoco_py
 
 from mimoEnv.envs.mimo_env import MIMoEnv, DEFAULT_PROPRIOCEPTION_PARAMS
+import mimoEnv.utils as mimo_utils
 
 BINOCULAR_XML = os.path.abspath(os.path.join(__file__, "..", "..", "assets", "binocular_scene.xml"))
 
@@ -16,6 +17,9 @@ PROPRIOCEPTION_PARAMS = {
     #"components": ["velocity", "torque", "limits"],
     #"threshold": .035,
 }
+
+TEXTURES = ["texture"+str(idx) for idx in range(1,51)]
+
 
 class MIMoBinocularEnv(MIMoEnv):
 
@@ -42,13 +46,25 @@ class MIMoBinocularEnv(MIMoEnv):
                          goals_in_observation=goals_in_observation,
                          done_active=done_active)
 
-    def compute_reward(self, achieved_goal, desired_goal, info):
+        # Preload target textures:
+        self.target_textures = {}
+        for texture in TEXTURES:
+            tex_id = mimo_utils.texture_name2id(self.sim.model, texture)
+            self.target_textures[texture] = tex_id
+        target_material_name = "target-texture"
+        self._target_material_id = mimo_utils.material_name2id(self.sim.model, target_material_name)
+        
+    def return_obs(self):
         obs = self._get_obs()
-        grayscale_weights = np.array([0.299, 0.587, 0.114])
-        img_left = np.dot(obs['eye_left'], grayscale_weights)
-        img_right = np.dot(obs['eye_right'], grayscale_weights)
-        reward = np.sum(img_left==img_right)
-        return reward
+        return obs
+
+    def compute_reward(self, achieved_goal, desired_goal, info):
+        #obs = self._get_obs()
+        #grayscale_weights = np.array([0.299, 0.587, 0.114])
+        #img_left = np.dot(obs['eye_left'], grayscale_weights)
+        #img_right = np.dot(obs['eye_right'], grayscale_weights)
+        #reward = np.sum(img_left==img_right)
+        return 0
 
     def _is_success(self, achieved_goal, desired_goal):
         """Indicates whether or not the achieved goal successfully achieved the desired goal."""
@@ -100,9 +116,13 @@ class MIMoBinocularEnv(MIMoEnv):
         return True
 
     def _step_callback(self):
-        # manually set right eye to follow left eye
-        self.sim.data.qpos[19] = self.sim.data.qpos[16] #horizontal
-        self.sim.data.qpos[17] = 0
-        self.sim.data.qpos[18] = 0
-        self.sim.data.qpos[20] = 0
-        self.sim.data.qpos[21] = 0
+        # manually set torsional eye positions to 0
+        self.sim.data.qpos[18] = 0  # left - torsional
+        self.sim.data.qpos[21] = 0  # right - torsional
+
+    def swap_target_texture(self, texture):
+        """ Changes target texture. Valid emotion names are in self.target_textures, which links readable
+        texture names to their associated texture ids """
+        assert texture in self.target_textures, "{} is not a valid texture!".format(texture)
+        new_tex_id = self.target_textures[texture]
+        self.sim.model.mat_texid[self._target_material_id] = new_tex_id

@@ -27,13 +27,134 @@
         <quality shadowsize="0"/>
         <global offwidth="800" offheight="800"/>
     </visual>
-	
-	<!-- Import everything except the kinematic tree -->
+
+    <!-- Import everything except the kinematic tree -->
 	<include file="binocular_meta.xml"></include>
 
-    <!-- Import textures for target -->
-    <include file="binocular_textures.xml"></include>
+    <asset>
+        <!--<texture type="skybox" builtin="gradient" rgb1="0.3 0.5 0.7" rgb2="0 0 0" width="512" height="512"/>-->
 
+        <!--background-->
+        <!--<texture name="background" type="2d" file="tex/binocular/background.png"/>
+        <material name="background" texture="background"/>-->
+
+        <!--floor-->
+        <!--<texture name="floor" type="2d" file="tex/binocular/floor.png"/>
+        <material name="floor" texture="floor"/>-->
+
+        <!--walls-->
+        <!--<texture name="walls" type="2d" file="tex/binocular/wall.png"/>
+        <material name="walls" texture="walls"/>-->
+
+        <!--target textures-->
+        <texture name="texture1" type="cube" filefront="../../../../data/texture1.png" rgb1="0 0 0"/>
+        <texture name="texture2" type="cube" filefront="../../../../data/texture2.png" rgb1="0 0 0"/>
+        <texture name="texture3" type="cube" filefront="../../../../data/texture3.png" rgb1="0 0 0"/>
+        <texture name="texture4" type="cube" filefront="../../../../data/texture4.png" rgb1="0 0 0"/>
+        <texture name="texture5" type="cube" filefront="../../../../data/texture5.png" rgb1="0 0 0"/>
+        <texture name="texture6" type="cube" filefront="../../../../data/texture6.png" rgb1="0 0 0"/>
+        <texture name="texture7" type="cube" filefront="../../../../data/texture7.png" rgb1="0 0 0"/>
+        <texture name="texture8" type="cube" filefront="../../../../data/texture8.png" rgb1="0 0 0"/>
+        <texture name="texture9" type="cube" filefront="../../../../data/texture9.png" rgb1="0 0 0"/>
+        <texture name="texture10" type="cube" filefront="../../../../data/texture10.png" rgb1="0 0 0"/>
+        <texture name="texture11" type="cube" filefront="../../../../data/texture11.png" rgb1="0 0 0"/>
+        <texture name="texture12" type="cube" filefront="../../../../data/texture12.png" rgb1="0 0 0"/>
+        <texture name="texture13" type="cube" filefront="../../../../data/texture13.png" rgb1="0 0 0"/>
+        <texture name="texture14" type="cube" filefront="../../../../data/texture14.png" rgb1="0 0 0"/>
+        <texture name="texture15" type="cube" filefront="../../../../data/texture15.png" rgb1="0 0 0"/>
+        <texture name="texture16" type="cube" filefront="../../../../data/texture16.png" rgb1="0 0 0"/>
+        <texture name="texture17" type="cube" filefront="../../../../data/texture17.png" rgb1="0 0 0"/>
+        <texture name="texture18" type="cube" filefront="../../../../data/texture18.png" rgb1="0 0 0"/>
+        <texture name="texture19" type="cube" filefront="../../../../data/texture19.png" rgb1="0 0 0"/>
+        <texture name="texture20" type="cube" filefront="../../../../data/texture20.png" rgb1="0 0 0"/>
+        <texture name="texture21" type="cube" filefront="../../../../data/texture21.png" rgb1="0 0 0"/>
+        <texture name="texture22" type="cube" filefront="../../../../data/texture22.png" rgb1="0 0 0"/>
+        <texture name="texture23" type="cube" filefront="../../../../data/texture23.png" rgb1="0 0 0"/>
+        <texture name="texture24" type="cube" filefront="../../../../data/texture24.png" rgb1="0 0 0"/>
+        <texture name="texture25" type="cube" filefront="../../../../data/texture25.png" rgb1="0 0 0"/>
+        <texture name="texture26" type="cube" filefront="../../../../data/texture26.png" rgb1="0 0 0"/>
+        <texture name="texture27" type="cube" filefront="../../../../data/texture27.png" rgb1="0 0 0"/>
+        <texture name="texture28" type="cube" filefront="../../../../data/texture28.png" rgb1="0 0 0"/>
+        <texture name="texture29" type="cube" filefront="../../../../data/texture29.png" rgb1="0 0 0"/>
+        <texture name="texture30" type="cube" filefront="../../../../data/texture30.png" rgb1="0 0 0"/>
+        <texture name="texture31" type="cube" filefront="../../../../data/texture31.png" rgb1="0 0 0"/>
+        <texture name="texture32" type="cube" filefront="../../../../data/texture32.png" rgb1="0 0 0"/>
+        <texture name="texture33" type="cube" filefront="../../../../data/texture33.png" rgb1="0 0 0"/>
+        <texture name="texture34" type="cube" filefront="../../../../data/texture34.png" rgb1="0 0 0"/>
+        <texture name="texture35" type="cube" filefront="../../../../data/texture35.png" rgb1="0 0 0"/>
+        <texture name="texture36" type="cube" filefront="../../../../data/texture36.png" rgb1="0 0 0"/>
+        <texture name="texture37" type="cube" filefront="../../../../data/texture37.png" rgb1="0 0 0"/>
+        <texture name="texture38" type="cube" filefront="../../../../data/texture38.png" rgb1="0 0 0"/>
+        <texture name="texture39" type="cube" filefront="../../../../data/texture39.png" rgb1="0 0 0"/>
+        <texture name="texture40" type="cube" filefront="../../../../data/texture40.png" rgb1="0 0 0"/>
+        <texture name="texture41" type="cube" filefront="../../../../data/texture41.png" rgb1="0 0 0"/>
+        <texture name="texture42" type="cube" filefront="../../../../data/texture42.png" rgb1="0 0 0"/>
+        <texture name="texture43" type="cube" filefront="../../../../data/texture43.png" rgb1="0 0 0"/>
+        <texture name="texture44" type="cube" filefront="../../../../data/texture44.png" rgb1="0 0 0"/>
+        <texture name="texture45" type="cube" filefront="../../../../data/texture45.png" rgb1="0 0 0"/>
+        <texture name="texture46" type="cube" filefront="../../../../data/texture46.png" rgb1="0 0 0"/>
+        <texture name="texture47" type="cube" filefront="../../../../data/texture47.png" rgb1="0 0 0"/>
+        <texture name="texture48" type="cube" filefront="../../../../data/texture48.png" rgb1="0 0 0"/>
+        <texture name="texture49" type="cube" filefront="../../../../data/texture49.png" rgb1="0 0 0"/>
+        <texture name="texture50" type="cube" filefront="../../../../data/texture50.png" rgb1="0 0 0"/>
+        <texture name="texture51" type="cube" filefront="../../../../data/texture51.png" rgb1="0 0 0"/>
+        <texture name="texture52" type="cube" filefront="../../../../data/texture52.png" rgb1="0 0 0"/>
+        <texture name="texture53" type="cube" filefront="../../../../data/texture53.png" rgb1="0 0 0"/>
+        <texture name="texture54" type="cube" filefront="../../../../data/texture54.png" rgb1="0 0 0"/>
+        <texture name="texture55" type="cube" filefront="../../../../data/texture55.png" rgb1="0 0 0"/>
+        <texture name="texture56" type="cube" filefront="../../../../data/texture56.png" rgb1="0 0 0"/>
+        <texture name="texture57" type="cube" filefront="../../../../data/texture57.png" rgb1="0 0 0"/>
+        <texture name="texture58" type="cube" filefront="../../../../data/texture58.png" rgb1="0 0 0"/>
+        <texture name="texture59" type="cube" filefront="../../../../data/texture59.png" rgb1="0 0 0"/>
+        <texture name="texture60" type="cube" filefront="../../../../data/texture60.png" rgb1="0 0 0"/>
+        <texture name="texture61" type="cube" filefront="../../../../data/texture61.png" rgb1="0 0 0"/>
+        <texture name="texture62" type="cube" filefront="../../../../data/texture62.png" rgb1="0 0 0"/>
+        <texture name="texture63" type="cube" filefront="../../../../data/texture63.png" rgb1="0 0 0"/>
+        <texture name="texture64" type="cube" filefront="../../../../data/texture64.png" rgb1="0 0 0"/>
+        <texture name="texture65" type="cube" filefront="../../../../data/texture65.png" rgb1="0 0 0"/>
+        <texture name="texture66" type="cube" filefront="../../../../data/texture66.png" rgb1="0 0 0"/>
+        <texture name="texture67" type="cube" filefront="../../../../data/texture67.png" rgb1="0 0 0"/>
+        <texture name="texture68" type="cube" filefront="../../../../data/texture68.png" rgb1="0 0 0"/>
+        <texture name="texture69" type="cube" filefront="../../../../data/texture69.png" rgb1="0 0 0"/>
+        <texture name="texture70" type="cube" filefront="../../../../data/texture70.png" rgb1="0 0 0"/>
+        <texture name="texture71" type="cube" filefront="../../../../data/texture71.png" rgb1="0 0 0"/>
+        <texture name="texture72" type="cube" filefront="../../../../data/texture72.png" rgb1="0 0 0"/>
+        <texture name="texture73" type="cube" filefront="../../../../data/texture73.png" rgb1="0 0 0"/>
+        <texture name="texture74" type="cube" filefront="../../../../data/texture74.png" rgb1="0 0 0"/>
+        <texture name="texture75" type="cube" filefront="../../../../data/texture75.png" rgb1="0 0 0"/>
+        <texture name="texture76" type="cube" filefront="../../../../data/texture76.png" rgb1="0 0 0"/>
+        <texture name="texture77" type="cube" filefront="../../../../data/texture77.png" rgb1="0 0 0"/>
+        <texture name="texture78" type="cube" filefront="../../../../data/texture78.png" rgb1="0 0 0"/>
+        <texture name="texture79" type="cube" filefront="../../../../data/texture79.png" rgb1="0 0 0"/>
+        <texture name="texture80" type="cube" filefront="../../../../data/texture80.png" rgb1="0 0 0"/>
+        <texture name="texture81" type="cube" filefront="../../../../data/texture81.png" rgb1="0 0 0"/>
+        <texture name="texture82" type="cube" filefront="../../../../data/texture82.png" rgb1="0 0 0"/>
+        <texture name="texture83" type="cube" filefront="../../../../data/texture83.png" rgb1="0 0 0"/>
+        <texture name="texture84" type="cube" filefront="../../../../data/texture84.png" rgb1="0 0 0"/>
+        <texture name="texture85" type="cube" filefront="../../../../data/texture85.png" rgb1="0 0 0"/>
+        <texture name="texture86" type="cube" filefront="../../../../data/texture86.png" rgb1="0 0 0"/>
+        <texture name="texture87" type="cube" filefront="../../../../data/texture87.png" rgb1="0 0 0"/>
+        <texture name="texture88" type="cube" filefront="../../../../data/texture88.png" rgb1="0 0 0"/>
+        <texture name="texture89" type="cube" filefront="../../../../data/texture89.png" rgb1="0 0 0"/>
+        <texture name="texture90" type="cube" filefront="../../../../data/texture90.png" rgb1="0 0 0"/>
+        <texture name="texture91" type="cube" filefront="../../../../data/texture91.png" rgb1="0 0 0"/>
+        <texture name="texture92" type="cube" filefront="../../../../data/texture92.png" rgb1="0 0 0"/>
+        <texture name="texture93" type="cube" filefront="../../../../data/texture93.png" rgb1="0 0 0"/>
+        <texture name="texture94" type="cube" filefront="../../../../data/texture94.png" rgb1="0 0 0"/>
+        <texture name="texture95" type="cube" filefront="../../../../data/texture95.png" rgb1="0 0 0"/>
+        <texture name="texture96" type="cube" filefront="../../../../data/texture96.png" rgb1="0 0 0"/>
+        <texture name="texture97" type="cube" filefront="../../../../data/texture97.png" rgb1="0 0 0"/>
+        <texture name="texture98" type="cube" filefront="../../../../data/texture98.png" rgb1="0 0 0"/>
+        <texture name="texture99" type="cube" filefront="../../../../data/texture99.png" rgb1="0 0 0"/>
+        <texture name="texture100" type="cube" filefront="../../../../data/texture100.png" rgb1="0 0 0"/>
+
+        <material name="target-texture" texture="texture1"/>
+
+    </asset>
+    
+    <!-- Import textures for target -->
+    <!--<include file="binocular_textures.xml"></include>-->
+    
     <equality>
         <weld body1="head"/>
         <weld body1="upper_body"/>
@@ -49,12 +170,13 @@
     </equality>
 
     <worldbody>
-        <geom name="floor" pos="1.5 0 0" size="1.5 1.5 .01" type="box" material="floor" condim="3"/>
-        <geom name="wall-back" pos="3 0 1" size="1 1.5 .01" euler="180 90 0" type="box" material="walls" condim="3"/>
-        <geom name="wall-left" pos="1.5 1.5 1" size="1 1.5 .01" euler="90 0 90" type="box" material="walls" condim="3"/>
-        <geom name="wall-right" pos="1.5 -1.5 1" size="1 1.5 .01" euler="90 0 90" type="box" material="walls" condim="3"/>
-        <!--<geom name="wall-right" pos="2.5 0 1" size="1 2.5 .01" euler="90 90 0" type="box" material="walls" condim="3"/>-->
-
+        
+        <!--<geom name="floor" pos="2 0 0" size="2.5 2.5 .01" type="box" material="floor" condim="3"/>
+        <geom name="wall-back" pos="4.5 0 1" size="1 2.5 .01" euler="180 90 0" type="box" material="walls" condim="3"/>
+        <geom name="wall-left" pos="2 2.5 1" size="1 2.5 .01" euler="90 0 90" type="box" material="walls" condim="3"/>
+        <geom name="wall-right" pos="2 -2.5 1" size="1 2.5 .01" euler="90 0 90" type="box" material="walls" condim="3"/>
+        -->
+        
         <light directional="false" diffuse=".4 .4 .4" specular="0 0 0" pos="0 0 10" dir="0 0 -1" castshadow="false"/>
         <light mode="targetbodycom" target="upper_body" directional="false" diffuse=".5 .5 .5" specular="0.3 0.3 0.3" pos="0 0 5.0" dir="0 0 -1"/>
         <light mode="targetbodycom" target="upper_body" directional="false" diffuse=".5 .5 .5" specular="0.3 0.3 0.3" pos="5.0 0 0.5" dir="-1 0 0"/>
@@ -62,14 +184,14 @@
         <light mode="targetbodycom" target="upper_body" directional="false" diffuse=".3 .3 .3" specular="0.3 0.3 0.3" pos="0 -5 0.5" dir="0 1 0"/>
                 
         <!-- The location and orientation of the base model can be set using this body -->
-		<body name="mimo_location" pos="0 0 .35" euler="0 0 0">
+		<body name="mimo_location" pos="-0.08125 0 .35" euler="0 0 0">      <!--MIMo positioned such that his eye cameras are at x=0-->
 			<freejoint/>
 			<include file="MIMo_model.xml"></include> <!-- Import the actual model-->
 		</body>
 
-        <body name="target" pos="1.5 0 .7">
+        <body name="target" pos="3 0 0">
             <freejoint/>
-			<geom type="box" material="texture1" size=".30 .30 .01" euler="90 90 0"/>
+			<geom type="box" material="target-texture" size="2 2 .01" pos="0 0 0.7" euler="90 -90 0"/>
 		</body>
 		
     </worldbody>

@@ -130,7 +130,7 @@
     <actuator>
 
 		<motor name="act:left_eye_horizontal" 		joint="robot:left_eye_horizontal" 	gear=".1" 	forcerange="-1 1"/>
-		<!--<motor name="act:right_eye_horizontal" 		joint="robot:right_eye_horizontal" 	gear=".1" 	forcerange="-1 1"/>-->
+		<motor name="act:right_eye_horizontal" 		joint="robot:right_eye_horizontal" 	gear=".1" 	forcerange="-1 1"/>
 		
 	</actuator>
 	
