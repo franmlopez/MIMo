@@ -83,7 +83,7 @@
 							<body name="right_fingers" pos="0 0 .0416"> <!-- Finger length is 5.14 cm, 1 cm overlap between palm and fingers -->
 								<joint name="robot:right_fingers" type="hinge" pos="0 0 0" axis="-1 0 0" springref="-40" range="-160 8" stiffness=".017" damping=".018" frictionloss=".0023"/>
 								<site name="torque_right_fingers" type="sphere" size="0.01" pos="0 0 0" group="4"/>
-								<geom type="box" size=".0229 .01 .0207" pos="0 0 .0207" friction="5 0.02 0.01"/>
+								<geom type="box" size=".0229 .01 .0207" pos="0 0 .0207" friction="5 0.02 0.01" material="target-texture"/>
 								<geom type="cylinder" size=".01 .023" pos="0 0 .0414" euler="0 90 0" friction="5 0.02 0.01"/>
 							</body>
 						</body>

@@ -8,7 +8,8 @@ from mimoEnv.envs.mimo_env import MIMoEnv, DEFAULT_PROPRIOCEPTION_PARAMS
 EYEHAND_XML = os.path.abspath(os.path.join(__file__, "..", "..", "assets", "eyehand_scene.xml"))
 
 VISION_PARAMS = {
-    "eye_left": {"width": 256, "height": 256},
+    "eye_left": {"width": 64, "height": 64},
+    "eye_right": {"width": 64, "height": 64},
 }
 
 class MIMoEyeHandEnv(MIMoEnv):
@@ -16,7 +17,7 @@ class MIMoEyeHandEnv(MIMoEnv):
     def __init__(self,
                  model_path=EYEHAND_XML,
                  initial_qpos={},
-                 n_substeps=2,
+                 n_substeps=1,
                  proprio_params=DEFAULT_PROPRIOCEPTION_PARAMS,
                  touch_params=None,
                  vision_params=VISION_PARAMS,
@@ -65,19 +66,8 @@ class MIMoEyeHandEnv(MIMoEnv):
         self.sim.set_state(self.initial_state)
         self.sim.forward()
 
-        # perform 10 random actions
-        for _ in range(10):
-            action = self.action_space.sample()
-            self._set_action(action)
-            self.sim.step()
-            self._step_callback()
-
         # reset target in random initial position and velocities as zero
-        qpos = self.sim.data.qpos
-        qpos[[-6, -5]] = np.array([
-            self.initial_state.qpos[-6] + self.np_random.uniform(low=-0.3, high=0.3, size=1)[0],
-            self.initial_state.qpos[-5] + self.np_random.uniform(low=-0.3, high=0.3, size=1)[0]
-        ])
+        qpos = np.array([-0.08125, 0, 0.35, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2.00, 1.5863, 0.06814, 0, 0, 1.37672, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
         qvel = np.zeros(self.sim.data.qvel.shape)
 
         new_state = mujoco_py.MjSimState(
@@ -86,10 +76,13 @@ class MIMoEyeHandEnv(MIMoEnv):
 
         self.sim.set_state(new_state)
         self.sim.forward()
-        self.target_init_pos = copy.deepcopy(self.sim.data.get_body_xpos('target'))
         return True
 
     def _step_callback(self):
         # manually set right eye to follow left eye
         self.sim.data.qpos[19] = -self.sim.data.qpos[16] #horizontal
         self.sim.data.qpos[20] = self.sim.data.qpos[17] # vertical
+
+    def return_obs(self):
+        obs = self._get_obs()
+        return obs
