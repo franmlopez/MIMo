@@ -25,12 +25,13 @@ class MIMoDrawerEnv(MIMoEnv):
                  vestibular_params=None,
                  goals_in_observation=False,
                  done_active=False,
-                 prediction=False):
+                 drawer_force_mu=0,
+                 drawer_force_sigma=0,
+                 ):
 
         self.steps = 0
-        self.toy_init_y = -0.15
-        self.agent = Agent()
-        self.prediction = prediction
+        self.drawer_force_mu = drawer_force_mu
+        self.drawer_force_sigma = drawer_force_sigma
 
         super().__init__(model_path=model_path,
                          initial_qpos=initial_qpos,
@@ -75,13 +76,8 @@ class MIMoDrawerEnv(MIMoEnv):
         In such a case, this method will be called again to attempt a the reset again.
         """
 
-        # train prediction network
-        if self.prediction:
-            for i in range(5):
-                self.agent.train_predict_net(self.agent.predict_nets[i])
-
         # reset target in random initial position and velocities as zero
-        qpos = np.array([-1.09241e-05, 4.03116e-06, 0.349443, 1, -2.16682e-06, 8.70054e-07, 5.45378e-06, -0.00492904, 0.288979, 0.00376704, 0.0026713, 0.287948, -0.00657526, -0.576921, 0.00130918, -9.38079e-05, -7.15269e-09, -4.2171e-09, -5.75793e-09, 7.15269e-09, -4.2171e-09, 5.75793e-09, 0.522459, 0.734782, -0.484279, -0.262299, -0.259645, 0.863403, 0.221394, 0.139992, -0.0377091, -0.142301, 0.00894348, -0.0741003, -0.35951, 0.00726376, -0.0193619, -0.374183, -0.107132, 1.94503e-05, -1.83078e-05, -0.196001, 0.0888279, -0.00018612, -2.22405e-05, -0.000995124, -0.107133, 3.80335e-05, -1.40993e-05, -0.195996, 0.0888214, -0.000213338, 1.77433e-06, -0.00099508, 2.4489e-05, 0.660031, -0.15, 0.484858, 1, -1.06491e-07, 1.37723e-05, 3.49732e-09, 0.451229, -0.15, 0.489973, 1, -5.02742e-16, 3.35704e-09, -1.50003e-07])
+        qpos = np.array([0.000500764, -0.000544089, 0.350125, 0.922961, 0.0183931, 0.0439376, -0.381935, -0.00378106, 0.146461, -0.0586624, -0.0284711, 0.136437, -0.0688624, -0.284341, 0.033117, 0.00373593, -4.61789e-08, -1.31973e-08, -4.50582e-09, 4.61789e-08, -1.31973e-08, 4.50582e-09, 0.572368, 1.14456, -0.436011, -0.852487, -0.283398, 0.122159, 0.0600522, -2.65132, -0.0662976, -0.143193, 0.00132513, -0.0578722, -0.362256, 0.00139129, -0.0121369, -0.366302, -0.0952619, -0.000319591, 0.00064712, -0.00186952, 0.00188041, -1.4498e-06, -6.1099e-05, -0.000716553, -0.0953267, 0.000402864, -0.000667143, -0.00161504, 0.00156153, 4.1315e-05, -5.31858e-05, -0.000716543, -2.55131e-07])
         qvel = np.zeros(self.sim.data.qvel.shape)
 
         new_state = mujoco_py.MjSimState(
@@ -90,146 +86,32 @@ class MIMoDrawerEnv(MIMoEnv):
 
         self.sim.set_state(new_state)
         self.sim.forward()
-        self.toy_init_y = self.sim.data.get_body_xpos('toy')[1]
+
+        # Add randomly sampled drawer force
+        force = np.random.normal(loc=self.drawer_force_mu, scale=self.drawer_force_sigma)
+        self.drawer_force = max(force, 0)
+        self.sim.data.xfrc_applied[25,:] = np.array([self.drawer_force, 0, 0, 0, 0, 0])
         return True
 
     def step(self, action):
 
-        proprio_before = self._get_obs()['observation']
         action = np.clip(action, self.action_space.low, self.action_space.high)
         self._set_action(action)
         self.sim.step()
         self._step_callback()
         obs = self._get_obs()
-        done = self._is_done()
-
-        # Intrinsic reward
-        if self.prediction:
-            proprio_after = obs['observation']
-            predictions = [self.agent.predict(self.agent.predict_nets[i], proprio_before, action, proprio_after) for i in range(5)]
-            disagreement = np.var(predictions)
-            intrinsic_reward = 1/10 * disagreement
-        else:
-            intrinsic_reward = 0
-
-        # Extrinsic reward
-        right_fingers_x = self.sim.data.get_body_xpos('right_fingers')[0]
-        drawer_open_x = 0.05   
-        drawer_open = (right_fingers_x < drawer_open_x)
-        left_fingers_pos = self.sim.data.get_body_xpos('left_fingers')
-        toy_pos = self.sim.data.get_body_xpos('toy')
-        fingers_toy_dist = np.linalg.norm(left_fingers_pos - toy_pos)
-        extrinsic_reward = -fingers_toy_dist + 1*drawer_open
-
-        # Total reward
-        reward =  1000*done + intrinsic_reward # + extrinsic_reward
+        
+        # Reward: drawer opening - metabolic cost
+        drawer_pos = self.sim.data.get_body_xpos('drawer')[0]
+        drawer_opening = 0.2 - drawer_pos
+        cost = 0.001 * np.square(self.sim.data.ctrl).sum()
+        reward =  drawer_opening # - cost
 
         # Info
-        info={'intrinsic_reward':intrinsic_reward, 'extrinsic_reward':extrinsic_reward}
+        done = False
+        info={
+            'force' : self.drawer_force,
+            'drawer_opening' : drawer_opening,
+        }
 
         return obs, reward, done, info
-
-
-##################
-### PREDICTION ###
-##################
-
-class Buffer():
-
-    def __init__(self, max_buffer_size=10000):
-        self.buffer_counter = 0
-        self.buffer_size = 0
-        self.max_buffer_size = max_buffer_size
-        self.proprio_before = np.array([])
-        self.proprio_after = np.array([])
-        self.action = np.array([])
-        
-    def reset(self):
-        self.buffer_counter = 0
-        self.buffer_size = 0
-        self.proprio_before = np.array([])
-        self.proprio_after = np.array([])
-        self.action = np.array([])
-
-    def store(self, proprio_before, proprio_after, action):
-        '''
-        Store experiences in buffer (up to max_buffer_size)
-        '''
-        if self.buffer_counter == 0:
-            self.proprio_before = np.array([proprio_before.detach().numpy()])
-            self.proprio_after = np.array([proprio_after.detach().numpy()])
-            self.action = np.array([action.detach().numpy()])
-        else: 
-            self.proprio_before = np.concatenate((self.proprio_before, [proprio_before.detach().numpy()]), axis=0)
-            self.proprio_after = np.concatenate((self.proprio_after, [proprio_after.detach().numpy()]), axis=0)
-            self.action = np.concatenate((self.action, [action.detach().numpy()]), axis=0)
-            self.proprio_before = self.proprio_before[-self.max_buffer_size:]
-            self.proprio_after = self.proprio_after[-self.max_buffer_size:]
-            self.action = self.action[-self.max_buffer_size:]
-        self.buffer_counter += 1
-        self.buffer_size = np.min([self.buffer_counter, self.max_buffer_size])
-
-class Predict(nn.Module):
-    def __init__(self, learning_rate=1e-3, n_proprio=141, n_actions=16):
-        super().__init__()
-
-        self.fc_1 = nn.Linear(n_proprio + n_actions, 512)
-        nn.init.kaiming_uniform_(self.fc_1.weight.data)
-        self.fc_2 = nn.Linear(512, 512)
-        nn.init.kaiming_uniform_(self.fc_2.weight.data)
-        self.fc_3 = nn.Linear(512, n_proprio)
-        nn.init.kaiming_uniform_(self.fc_3.weight.data)
-
-        self.optimizer = optim.Adam(self.parameters(), lr=learning_rate)
-
-    def forward(self, proprio_before, action):
-        proprio_action = torch.cat([proprio_before,action], dim=1)
-        proprio_prediction = F.relu(self.fc_1(proprio_action))
-        proprio_prediction = F.relu(self.fc_2(proprio_prediction))
-        proprio_prediction = F.relu(self.fc_3(proprio_prediction))
-        return proprio_prediction
-
-class Agent():
-    def __init__(self, batch_size=100):
-        self.predict_nets = [Predict(),Predict(),Predict(),Predict(),Predict()]
-        self.buffer = Buffer()
-        self.batch_size = batch_size
-
-    def predict(self, predict_net, proprio_before, action, proprio_after):
-        # Compute prediction reward:
-        proprio_before = torch.reshape(torch.from_numpy(proprio_before), (1,len(proprio_before))).float()
-        proprio_after = torch.reshape(torch.from_numpy(proprio_after), (1,len(proprio_after))).float()
-        action = torch.reshape(torch.from_numpy(action), (1,len(action))).float()
-        proprio_prediction = predict_net(proprio_before, action)
-        prediction_reward = F.mse_loss(proprio_prediction, proprio_after).item()
-        # Store in buffer:
-        proprio_before = proprio_before.view(-1)
-        proprio_after = proprio_after.view(-1)
-        action = action.view(-1)
-        self.buffer.store(proprio_before, proprio_after, action)
-        return prediction_reward
-    
-    def train_predict_net(self, predict_net):
-        '''
-        Train prediction network on a batch sampled from buffer.
-        '''
-        if self.buffer.buffer_size < self.batch_size:
-            return None
-           
-        predict_net.train()
-        running_loss = 0
-
-        batch_idx = np.random.choice(self.buffer.buffer_size, self.batch_size, replace=False)
-        proprio_before = torch.from_numpy(self.buffer.proprio_before[batch_idx]).float()
-        proprio_after = torch.from_numpy(self.buffer.proprio_after[batch_idx]).float()
-        action = torch.from_numpy(self.buffer.action[batch_idx]).float()
-
-        predict_net.optimizer.zero_grad()
-        proprio_prediction = predict_net(proprio_before, action)
-        predict_loss = F.mse_loss(proprio_after, proprio_prediction)
-        predict_loss.backward()
-        predict_net.optimizer.step()
-
-        running_loss += predict_loss.item()
-    
-        return running_loss
