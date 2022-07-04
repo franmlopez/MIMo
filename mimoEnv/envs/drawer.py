@@ -44,10 +44,10 @@ class MIMoDrawerEnv(MIMoEnv):
                          done_active=done_active)
 
     def _is_done(self, achieved_goal=None, desired_goal=None, info=None):
-        toy_y = self.sim.data.get_body_xpos('toy')[1]
-        contact_threshold = 0.005
-        done = (np.linalg.norm(toy_y - self.toy_init_y) > contact_threshold)
-        return done
+        #toy_y = self.sim.data.get_body_xpos('toy')[1]
+        #contact_threshold = 0.005
+        #done = (np.linalg.norm(toy_y - self.toy_init_y) > contact_threshold)
+        return False
         
     def compute_reward(self, achieved_goal, desired_goal, info):
         """Dummy function"""
@@ -77,7 +77,7 @@ class MIMoDrawerEnv(MIMoEnv):
         """
 
         # reset target in random initial position and velocities as zero
-        qpos = np.array([0.000500764, -0.000544089, 0.350125, 0.922961, 0.0183931, 0.0439376, -0.381935, -0.00378106, 0.146461, -0.0586624, -0.0284711, 0.136437, -0.0688624, -0.284341, 0.033117, 0.00373593, -4.61789e-08, -1.31973e-08, -4.50582e-09, 4.61789e-08, -1.31973e-08, 4.50582e-09, 0.572368, 1.14456, -0.436011, -0.852487, -0.283398, 0.122159, 0.0600522, -2.65132, -0.0662976, -0.143193, 0.00132513, -0.0578722, -0.362256, 0.00139129, -0.0121369, -0.366302, -0.0952619, -0.000319591, 0.00064712, -0.00186952, 0.00188041, -1.4498e-06, -6.1099e-05, -0.000716553, -0.0953267, 0.000402864, -0.000667143, -0.00161504, 0.00156153, 4.1315e-05, -5.31858e-05, -0.000716543, -2.55131e-07])
+        qpos = np.array([0.000709667, -4.6158e-06, 0.350098, 0.998933, -7.16743e-06, 0.0461819, 0.000250664, -0.00509185, 0.103724, -0.0579377, -0.0161323, 0.101646, -0.0659375, -0.206492, 0.0315221, 0.00158587, -1.23292e-08, -3.94402e-09, -2.35528e-09, 1.23292e-08, -3.94402e-09, 2.35528e-09, 0.62636, 0.524773, -0.498628, -0.607125, 0.0848819, 0.841533, 0.0559336, 0.139842, -0.0661014, -0.143389, 0.00439174, -0.0522003, -0.361253, 0.00350864, -0.0109386, -0.36993, -0.0923748, 3.72571e-05, 0.000489106, -0.00180591, 0.00180126, 1.87318e-05, -5.91088e-05, -0.000916676, -0.0924224, 4.98519e-05, -0.000507101, -0.00158078, 0.00152869, 2.29407e-05, -5.21039e-05, -0.000916652, -3.8779e-05])
         qvel = np.zeros(self.sim.data.qvel.shape)
 
         new_state = mujoco_py.MjSimState(
@@ -102,10 +102,10 @@ class MIMoDrawerEnv(MIMoEnv):
         obs = self._get_obs()
         
         # Reward: drawer opening - metabolic cost
-        drawer_pos = self.sim.data.get_body_xpos('drawer')[0]
+        drawer_pos = self.sim.data.get_body_xpos('handle')[0]
         drawer_opening = 0.2 - drawer_pos
-        cost = 0.001 * np.square(self.sim.data.ctrl).sum()
-        reward =  drawer_opening # - cost
+        cost = 0.005 * np.square(self.sim.data.ctrl).sum()
+        reward =  drawer_opening - cost
 
         # Info
         done = False

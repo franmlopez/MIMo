@@ -54,11 +54,11 @@
         <weld body1="right_upper_leg"/>
         <weld body1="left_foot"/>
         <weld body1="right_foot"/>
-        <weld body1="drawer" body2="right_hand" relpose="-0.25 0 0.25 1 1 0 1"/>
+        <weld body1="handle" body2="right_fingers" relpose="-0.05 0 0 1 1 0 1"/>
     </equality>
 
     <keyframe>
-        <key qpos='0.000500764 -0.000544089 0.350125 0.922961 0.0183931 0.0439376 -0.381935 -0.00378106 0.146461 -0.0586624 -0.0284711 0.136437 -0.0688624 -0.284341 0.033117 0.00373593 -4.61789e-08 -1.31973e-08 -4.50582e-09 4.61789e-08 -1.31973e-08 4.50582e-09 0.572368 1.14456 -0.436011 -0.852487 -0.283398 0.122159 0.0600522 -2.65132 -0.0662976 -0.143193 0.00132513 -0.0578722 -0.362256 0.00139129 -0.0121369 -0.366302 -0.0952619 -0.000319591 0.00064712 -0.00186952 0.00188041 -1.4498e-06 -6.1099e-05 -0.000716553 -0.0953267 0.000402864 -0.000667143 -0.00161504 0.00156153 4.1315e-05 -5.31858e-05 -0.000716543 -2.55131e-07'/>
+        <key qpos='0.000709667 -4.6158e-06 0.350098 0.998933 -7.16743e-06 0.0461819 0.000250664 -0.00509185 0.103724 -0.0579377 -0.0161323 0.101646 -0.0659375 -0.206492 0.0315221 0.00158587 -1.23292e-08 -3.94402e-09 -2.35528e-09 1.23292e-08 -3.94402e-09 2.35528e-09 0.62636 0.524773 -0.498628 -0.607125 0.0848819 0.841533 0.0559336 0.139842 -0.0661014 -0.143389 0.00439174 -0.0522003 -0.361253 0.00350864 -0.0109386 -0.36993 -0.0923748 3.72571e-05 0.000489106 -0.00180591 0.00180126 1.87318e-05 -5.91088e-05 -0.000916676 -0.0924224 4.98519e-05 -0.000507101 -0.00158078 0.00152869 2.29407e-05 -5.21039e-05 -0.000916652 -3.8779e-05'/>
     </keyframe>
 
     <worldbody>
@@ -72,22 +72,27 @@
         <light mode="targetbodycom" target="upper_body" directional="false" diffuse=".3 .3 .3" specular="0.3 0.3 0.3" pos="0 -5 0.5" dir="0 1 0"/>
                 
         <!-- The location and orientation of the base model can be set using this body -->
-		<body name="mimo_location" pos="0 0 .35" euler="0 0 -45">
+		<body name="mimo_location" pos="0 0 .35" euler="0 0 0">
 			<freejoint/>
 			<include file="MIMo_model.xml"></include> <!-- Import the actual model-->
 		</body>		
 
-        <body name="base" pos="0.3 -0.25 0.35">
-			<geom type="box" material="wood" size="0.2 0.15 0.195" pos="0 0 0" condim="6"/>
+        <body name="base" pos="0.45 -0.25 0.25">
+			<!--<geom type="box" material="wood" size="0.2 0.15 0.195" pos="0 0 0" condim="6"/>-->
             <geom type="box" material="wood" size="0.2 0.15 0.005" pos="0 0 0.31" condim="6"/>
 		</body>
 
-        <body name="drawer" pos="0.3 -0.25 0.35">
-			<joint name="drawer" type="slide" pos="0 0 0" axis="-1 0 0" range="0 5"/>
-            <geom type="box" material="wood" size="0.05 0.15 0.05" pos="-0.15 0 0.25" condim="6"/>
-            <geom type="box" material="wood" size="0.055 0.15 0.05" pos="0.08 0 0.25" condim="6"/>
+        <body name="drawer" pos="0.45 -0.25 0.25">
+			<joint name="drawer" type="slide" pos="0 0 0" axis="-1 0 0" range="0 0.15"/>
+            <geom type="box" material="wood" size="0.025 0.15 0.05" pos="-0.175 0 0.25" condim="6"/>
+            <!--<geom type="box" material="wood" size="0.07 0.15 0.05" pos="0.08 0 0.25" condim="6"/>-->
             <geom type="box" material="wood" size="0.2 0.15 0.005" pos="0 0 0.205" condim="6"/>
-            <geom type="cylinder" material="green-plastic" size="0.025 0.025" pos="-0.2 0 0.25" euler="0 90 0" condim="6"/>
+            <body name="handle" pos="-0.2 0.08 0.25">
+                <geom type="cylinder" material="green-plastic" size="0.025 0.015" pos="0 0 0" euler="0 90 0" condim="6"/>
+            </body>
+            <body name="dummy_handle" pos="-0.2 -0.08 0.25">
+                <geom type="cylinder" material="green-plastic" size="0.025 0.015" pos="0 0 0" euler="0 90 0" condim="6"/>
+            </body>
 		</body>
 
         <!--<body name="toy" pos="0.2 -0.3 0.485">
