@@ -37,10 +37,16 @@ def main():
                         help='Name of model to load')
     parser.add_argument('--save_model', default='', type=str,
                         help='Name of model to save')
-    parser.add_argument('--mu', default=0, type=int,
+    parser.add_argument('--test_mu', default=0, type=int,
                         help='Mean of distribution of forces of drawer')
-    parser.add_argument('--sigma', default=0, type=int,
+    parser.add_argument('--test_sigma', default=0, type=int,
                         help='Std of distribution of forces of drawer')
+    parser.add_argument('--mu', default=0, type=int,
+                        help='mu of model to load')
+    parser.add_argument('--sigma', default=0, type=int,
+                        help='sigma of model to load')                        
+    parser.add_argument('--iter', default=0, type=int,
+                        help='iter of model to load')                        
     
     args = parser.parse_args()
     algorithm = args.algorithm
@@ -50,10 +56,13 @@ def main():
     save_model = args.save_model
     save_every = args.save_every
     save_every = train_for if save_every==None else save_every
+    test_mu = args.test_mu
+    test_sigma = args.test_sigma
     mu = args.mu
     sigma = args.sigma
+    iter = args.iter
     
-    env = gym.make('MIMoDrawer-v0', drawer_force_mu=mu, drawer_force_sigma=sigma)
+    env = gym.make('MIMoDrawer-v0', drawer_force_mu=test_mu, drawer_force_sigma=test_sigma)
 
     if algorithm == 'PPO':
         from stable_baselines3 import PPO as RL
@@ -70,7 +79,7 @@ def main():
     if algorithm is None:
         model = None
     elif load_model:
-        model = RL.load("models/drawer__mu" + str(mu) + '_sigma' + str(sigma) + '_iter0', env)
+        model = RL.load("models/drawer_mu" + str(mu) + '_sigma' + str(sigma) + '_iter' + str(iter), env)
 
 
     test(env, model=model, test_for=test_for)

@@ -3,6 +3,7 @@ import time
 import mimoEnv
 import argparse
 import numpy as np
+import pandas as pd
 
 def main():
 
@@ -67,13 +68,36 @@ def main():
     model = RL.load("models/drawer_" + name + "_iter"+str(iter), env)
     obs = env.reset()
     n_drawer_open = 0
+    timestep = 0
+
+    df_drawer = pd.DataFrame(columns=["timestep","drawer_pos","n_drawer_open"])
+    df_proprio = pd.DataFrame()
+
     for idx in range(test_for):
+        timestep += 1
         action, _ = model.predict(obs)
         obs, rew, done, info = env.step(action)
-        n_drawer_open += (1 if info['drawer_opening']>0 else 0)
+        
+        drawer_force = info['drawer_force']
+        drawer_pos = info['drawer_pos']
+        n_drawer_open += (1 if drawer_pos<0.2 else 0)
+        df_drawer = df_drawer.append({
+            'timestep': timestep,
+            'drawer_pos': drawer_pos,
+            'n_drawer_open': n_drawer_open,
+            'drawer_force': drawer_force,
+            }, ignore_index=True)
+
+        proprio = obs['observation']
+        df_proprio = df_proprio.append(pd.Series(np.append(np.append(timestep,drawer_force),proprio)), ignore_index=True)
+
         if done:
             obs = env.reset()
+            timestep = 0
+
     print('mu:',mu,'\tsigma:',sigma,'\titer:',iter,'\t','score:',n_drawer_open/test_for)
+    df_drawer.to_csv('results/drawer_testmu0'+str(test_mu)+'_mu'+str(mu)+'_sigma'+str(sigma)+'_iter'+str(iter)+'.csv')
+    df_proprio.to_csv('results/proprio_testmu0'+str(test_mu)+'_mu'+str(mu)+'_sigma'+str(sigma)+'_iter'+str(iter)+'.csv')
 
 if __name__ == '__main__':
     main()

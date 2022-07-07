@@ -27,11 +27,15 @@ class MIMoDrawerEnv(MIMoEnv):
                  done_active=False,
                  drawer_force_mu=0,
                  drawer_force_sigma=0,
+                 min_force=0,
+                 max_force=0,
                  ):
 
         self.steps = 0
         self.drawer_force_mu = drawer_force_mu
         self.drawer_force_sigma = drawer_force_sigma
+        self.min_force=min_force
+        self.max_force=max_force
 
         super().__init__(model_path=model_path,
                          initial_qpos=initial_qpos,
@@ -78,6 +82,7 @@ class MIMoDrawerEnv(MIMoEnv):
 
         # reset target in random initial position and velocities as zero
         qpos = np.array([0.000709667, -4.6158e-06, 0.350098, 0.998933, -7.16743e-06, 0.0461819, 0.000250664, -0.00509185, 0.103724, -0.0579377, -0.0161323, 0.101646, -0.0659375, -0.206492, 0.0315221, 0.00158587, -1.23292e-08, -3.94402e-09, -2.35528e-09, 1.23292e-08, -3.94402e-09, 2.35528e-09, 0.62636, 0.524773, -0.498628, -0.607125, 0.0848819, 0.841533, 0.0559336, 0.139842, -0.0661014, -0.143389, 0.00439174, -0.0522003, -0.361253, 0.00350864, -0.0109386, -0.36993, -0.0923748, 3.72571e-05, 0.000489106, -0.00180591, 0.00180126, 1.87318e-05, -5.91088e-05, -0.000916676, -0.0924224, 4.98519e-05, -0.000507101, -0.00158078, 0.00152869, 2.29407e-05, -5.21039e-05, -0.000916652, -3.8779e-05])
+        qpos = qpos + self.np_random.uniform(low=-1e-4, high=1e-4, size=qpos.shape)
         qvel = np.zeros(self.sim.data.qvel.shape)
 
         new_state = mujoco_py.MjSimState(
@@ -89,7 +94,7 @@ class MIMoDrawerEnv(MIMoEnv):
 
         # Add randomly sampled drawer force
         force = np.random.normal(loc=self.drawer_force_mu, scale=self.drawer_force_sigma)
-        self.drawer_force = max(force, 0)
+        self.drawer_force = min(max(force, self.min_force), self.max_force)
         self.sim.data.xfrc_applied[25,:] = np.array([self.drawer_force, 0, 0, 0, 0, 0])
         return True
 
@@ -110,7 +115,8 @@ class MIMoDrawerEnv(MIMoEnv):
         # Info
         done = False
         info={
-            'force' : self.drawer_force,
+            'drawer_force' : self.drawer_force,
+            'drawer_pos' : drawer_pos, 
             'drawer_opening' : drawer_opening,
         }
 
