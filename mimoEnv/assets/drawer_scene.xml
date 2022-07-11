@@ -42,6 +42,7 @@
         <material name="metal" rgba="0.5 0.5 0.5 1" specular=".0" shininess="1"/>
         <material name="red-plastic" rgba="0.9 0.05 0.05 1" specular=".0" shininess=".2"/>
         <material name="green-plastic" rgba="0.1 0.4 0.1 1" specular=".0" shininess=".2"/>
+        <material name="white-wood" rgba="0.9 0.9 0.9 1" specular=".0" shininess="0"/>
 
     </asset>
 	
@@ -50,15 +51,17 @@
 
     <equality>
         <weld body1="head"/>
-        <weld body1="left_upper_leg"/>
+        <weld body1="lower_body"/>
+        <!--<weld body1="left_upper_leg"/>
         <weld body1="right_upper_leg"/>
         <weld body1="left_foot"/>
-        <weld body1="right_foot"/>
+        <weld body1="right_foot"/>-->
         <weld body1="handle" body2="right_fingers" relpose="-0.05 0 0 1 1 0 1"/>
     </equality>
 
     <keyframe>
-        <key qpos='0.000709667 -4.6158e-06 0.350098 0.998933 -7.16743e-06 0.0461819 0.000250664 -0.00509185 0.103724 -0.0579377 -0.0161323 0.101646 -0.0659375 -0.206492 0.0315221 0.00158587 -1.23292e-08 -3.94402e-09 -2.35528e-09 1.23292e-08 -3.94402e-09 2.35528e-09 0.62636 0.524773 -0.498628 -0.607125 0.0848819 0.841533 0.0559336 0.139842 -0.0661014 -0.143389 0.00439174 -0.0522003 -0.361253 0.00350864 -0.0109386 -0.36993 -0.0923748 3.72571e-05 0.000489106 -0.00180591 0.00180126 1.87318e-05 -5.91088e-05 -0.000916676 -0.0924224 4.98519e-05 -0.000507101 -0.00158078 0.00152869 2.29407e-05 -5.21039e-05 -0.000916652 -3.8779e-05'/>
+        <!--<key qpos='0.000709667 -4.6158e-06 0.350098 0.998933 -7.16743e-06 0.0461819 0.000250664 -0.00509185 0.103724 -0.0579377 -0.0161323 0.101646 -0.0659375 -0.206492 0.0315221 0.00158587 -1.23292e-08 -3.94402e-09 -2.35528e-09 1.23292e-08 -3.94402e-09 2.35528e-09 0.62636 0.524773 -0.498628 -0.607125 0.0848819 0.841533 0.0559336 0.139842 -0.0661014 -0.143389 0.00439174 -0.0522003 -0.361253 0.00350864 -0.0109386 -0.36993 -0.0923748 3.72571e-05 0.000489106 -0.00180591 0.00180126 1.87318e-05 -5.91088e-05 -0.000916676 -0.0924224 4.98519e-05 -0.000507101 -0.00158078 0.00152869 2.29407e-05 -5.21039e-05 -0.000916652 -3.8779e-05'/>-->
+        <key qpos='0.000709667 0 0.350098 0.998933 -7.16743e-06 0.0461819 0.000250664 -0.00509185 0.103724 -0.0579377 -0.0161323 0.101646 -0.0659375 -0.206492 0.0315221 0.00158587 -1.23292e-08 -3.94402e-09 -2.35528e-09 1.23292e-08 -3.94402e-09 2.35528e-09 0.62636 0.524773 -0.498628 -0.607125 0.0848819 0.841533 0.0559336 0.139842 -0.0661014 -0.143389 0.00439174 -0.0522003 -0.361253 0.00350864 -0.0109386 -0.36993 -1.69353 3.72571e-05 0.000489106 -1.5687 0.00180126 1.87318e-05 -5.91088e-05 -0.000916676 -1.69353 4.98519e-05 -0.000507101 -1.5687 0.00152869 2.29407e-05 -5.21039e-05 -0.000916652 -3.8779e-05'/>
     </keyframe>
 
     <worldbody>
@@ -77,23 +80,23 @@
 			<include file="MIMo_model.xml"></include> <!-- Import the actual model-->
 		</body>		
 
-        <body name="base" pos="0.45 -0.25 0.25">
-			<!--<geom type="box" material="wood" size="0.2 0.15 0.195" pos="0 0 0" condim="6"/>-->
-            <geom type="box" material="wood" size="0.2 0.15 0.005" pos="0 0 0.31" condim="6"/>
-		</body>
-
-        <body name="drawer" pos="0.45 -0.25 0.25">
-			<joint name="drawer" type="slide" pos="0 0 0" axis="-1 0 0" range="0 0.15" frictionloss="10"/>
-            <geom type="box" material="wood" size="0.025 0.15 0.05" pos="-0.175 0 0.25" condim="6"/>
-            <!--<geom type="box" material="wood" size="0.07 0.15 0.05" pos="0.08 0 0.25" condim="6"/>-->
-            <geom type="box" material="wood" size="0.2 0.15 0.005" pos="0 0 0.205" condim="6"/>
-            <body name="handle" pos="-0.2 0.08 0.25">
-                <geom type="cylinder" material="green-plastic" size="0.025 0.015" pos="0 0 0" euler="0 90 0" condim="6"/>
+        <body name="drawer-base" pos="0.45 -0.30 0.25">
+            <body name="base" pos="0 0 0">
+                <geom type="box" material="white-wood" size="0.2 0.21 0.195" pos="0 0 0" condim="6"/> <!--bottom-->
+                <geom type="box" material="wood" size="0.2 0.21 0.005" pos="0 0 0.31" condim="6"/> <!--top-->
             </body>
-            <body name="dummy_handle" pos="-0.2 -0.08 0.25">
-                <geom type="cylinder" material="green-plastic" size="0.025 0.015" pos="0 0 0" euler="0 90 0" condim="6"/>
+            <body name="drawer" pos="0 0 0">
+                <joint name="drawer" type="slide" pos="0 0 0" axis="-1 0 0" range="0 0.25" frictionloss="15"/>
+                <geom type="box" material="wood" size="0.1 0.21 0.05" pos="-0.1 0 0.25" condim="6"/> <!--front-->
+                <geom type="box" material="wood" size="0.2 0.21 0.005" pos="0 0 0.205" condim="6"/> <!--bottom-->
+                <body name="handle" pos="-0.2 0.12 0.25">
+                    <geom type="cylinder" material="green-plastic" size="0.0175 0.015" pos="0 0 0" euler="0 90 0" condim="6"/>
+                </body>
+                <body name="dummy_handle" pos="-0.2 -0.12 0.25">
+                    <geom type="cylinder" material="green-plastic" size="0.0175 0.015" pos="0 0 0" euler="0 90 0" condim="6"/>
+                </body>
             </body>
-		</body>
+        </body>
 
         <!--<body name="toy" pos="0.2 -0.3 0.485">
             <freejoint/>

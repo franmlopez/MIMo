@@ -41,10 +41,10 @@ def main():
         from stable_baselines3 import A2C as RL
 
     experiments = [
-        {'name':'mu1_sigma0', 'mu':1, 'sigma': 0,},
+        {'name':'mu1_sigma0', 'mu':0, 'sigma': 0,},
         {'name':'mu12_sigma0', 'mu':12, 'sigma':0,},
         {'name':'mu6_sigma0', 'mu':6, 'sigma':0},
-        {'name':'mu6_sigma6', 'mu':6, 'sigma':6},
+        {'name':'mu6_sigma3', 'mu':6, 'sigma':3},
     ]
 
     experiment = experiments[exp_id]
@@ -52,7 +52,7 @@ def main():
     mu = experiment['mu']
     sigma = experiment['sigma']
     
-    for iter in range(3,10):
+    for iter in range(10):
 
         env = gym.make('MIMoDrawer-v0', drawer_force_mu=mu, drawer_force_sigma=sigma)
         env.reset()
